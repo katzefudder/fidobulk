@@ -6,26 +6,31 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  build:
+  build-and-release:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - run: |
+      - name: Install dependencies and build
+        run: |
           python -m pip install --upgrade pip
           pip install -r app/requirements.txt
           pip install pyinstaller
           pyinstaller app/main.py --onefile --name=fidobulk
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload executable to GitHub release
+        uses: softprops/action-gh-release@v2
         with:
-          name: python-app-exe
-          path: ./dist/fidobulk.exe
+          files: ./dist/fidobulk.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
