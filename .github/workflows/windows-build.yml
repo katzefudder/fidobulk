@@ -36,5 +36,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ykbatch
+          name: fidobulk
           path: app/dist/fidobulk.exe
