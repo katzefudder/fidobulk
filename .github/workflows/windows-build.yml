@@ -23,7 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r app/requirements.txt
           pip install pyinstaller
-          pyinstaller main.py --onefile --name=fidobulk
+          pyinstaller app/main.py --onefile --name=fidobulk
 
       - uses: actions/upload-artifact@v4
         with:
