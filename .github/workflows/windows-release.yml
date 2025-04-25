@@ -1,0 +1,31 @@
+# .github/workflows/release.yml
+name: Release on Tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Download artifact from previous workflow
+        uses: actions/download-artifact@v4
+        with:
+          name: ykbatch
+          path: ./dist
+
+      - name: Show files
+        run: dir ./dist
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./dist/ykbatch.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
