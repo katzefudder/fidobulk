@@ -8,6 +8,7 @@ USE fido;
 CREATE TABLE IF NOT EXISTS logs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user VARCHAR(250),
+    pin INT(8),
     serial_number VARCHAR(32),
     message TEXT
 );

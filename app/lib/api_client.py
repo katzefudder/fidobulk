@@ -1,10 +1,11 @@
 import requests
 
-def submit_user_data(user, serial):
+def submit_user_data(user, pin_value, serial):
     url = "http://localhost:5000/api"
     payload = {
         "user": user['displayName'],
         "serial_number": serial,
+        "pin": pin_value, 
         "message": "lorem ipsum"
     }
     response = requests.post(url, json=payload)

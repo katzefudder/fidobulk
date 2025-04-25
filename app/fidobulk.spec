@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='main',
+    name='fidobulk',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -39,7 +39,7 @@ exe = EXE(
 )
 app = BUNDLE(
     exe,
-    name='main.app',
+    name='fidobulk.app',
     icon='favicon.icns',
     bundle_identifier=None,
 )

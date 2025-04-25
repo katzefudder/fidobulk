@@ -1,21 +1,27 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QPlainTextEdit, QPushButton, QComboBox, QMessageBox
-from lib.device import get_serial_number
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QPlainTextEdit, QPushButton, QComboBox, QMessageBox, QLineEdit
+from lib.device import Device
 from lib.auth import get_access_token
 from lib.users import fetch_users
 from lib.api_client import submit_user_data
 
 class YkBatch(QWidget):
+
+    device = []
+
     def __init__(self):
         super().__init__()
         self.init_ui()
 
+
     def init_ui(self):
         self.setWindowTitle("YubiKey Demo")
         self.resize(300, 140)
+        device_instance = Device()
+        self.device = device_instance
         layout = QVBoxLayout()
 
         try:
-            self.serial_number = get_serial_number()
+            self.serial_number = self.device.get_serial_number()
             self.label = QLabel(f"FIDO Seriennummer: {self.serial_number}")
         except Exception as e:
             QMessageBox.critical(self, "Fehler", f"⛔️ Seriennummer:\n{e}")
@@ -34,6 +40,18 @@ class YkBatch(QWidget):
             self.user_combobox.addItem(user['displayName'], user)
         layout.addWidget(self.user_combobox)
 
+        self.pin_text_label = QLabel("Pin eingeben:")
+        layout.addWidget(self.pin_text_label)
+        self.pin_text_box = QLineEdit(self)
+        self.pin_text_box.setMaxLength(8)
+        self.pin_text_box.move(20, 20)
+        self.pin_text_box.resize(280,40)
+        layout.addWidget(self.pin_text_box)
+
+        self.reset_button = QPushButton("Reset Fido Stick")
+        self.reset_button.clicked.connect(self.handle_reset)
+        layout.addWidget(self.reset_button)
+
         self.send_button = QPushButton("Absenden")
         self.send_button.clicked.connect(self.handle_submit)
         layout.addWidget(self.send_button)
@@ -42,8 +60,15 @@ class YkBatch(QWidget):
 
     def handle_submit(self):
         selected_user = self.user_combobox.currentData()
+        pin_value = self.pin_text_box.text()
+        print(f"pin: {pin_value}")
         try:
-            submit_user_data(selected_user, self.serial_number)
+            self.device.set_pin(pin_value)
+            submit_user_data(selected_user, pin_value, self.serial_number)
             QMessageBox.information(self, "Erfolg", "✅ Nachricht gesendet!")
         except Exception as e:
             QMessageBox.critical(self, "Fehler", f"⛔️ Fehler:\n{e}")
+
+    def handle_reset(self):
+        print(f"reset device {self.device}")
+        self.device.reset()

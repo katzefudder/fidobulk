@@ -18,12 +18,13 @@ def api():
         data = request.get_json()
         user = data.get("user", "user gibbetnet")
         message = data.get("message", "message gibbetnet")
+        pin = data.get("pin", 1111)
         serial_number = data.get("serial_number", "message gibbetnet")
 
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO logs (user, serial_number, message) VALUES (%s, %s, %s)", (user, serial_number, message))
+        cursor.execute("INSERT INTO logs (user, pin, serial_number, message) VALUES (%s, %s, %s, %s)", (user, pin, serial_number, message))
         conn.commit()
         cursor.close()
         conn.close()
