@@ -28,7 +28,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: python-app-exe
-          path: ./app/dist/fidobulk.exe
+          path: ./dist/fidobulk.exe
 
       - name: Build EXE
         working-directory: ./app
