@@ -29,9 +29,3 @@ jobs:
         with:
           name: python-app-exe
           path: ./dist/fidobulk.exe
-
-      - name: Build EXE
-        working-directory: ./app
-        run: |
-          pip install pyinstaller
-          pyinstaller main.py --onefile --name=fidobulk
