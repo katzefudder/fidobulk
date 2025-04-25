@@ -1,0 +1,5 @@
+PyQt5
+yubikey-manager
+requests
+fido2
+pyinstaller
