@@ -3,3 +3,4 @@ yubikey-manager
 requests
 fido2
 pyinstaller
+pyscard
