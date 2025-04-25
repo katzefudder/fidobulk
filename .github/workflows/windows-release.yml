@@ -18,7 +18,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: fidobulk
-          path: ./dist
+          path: ./app/dist
 
       - name: Show files
         run: dir ./app/dist
