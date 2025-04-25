@@ -2,26 +2,25 @@
 name: Release on Tag
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_run:
+    workflows: ["Build Python App"]
+    types:
+      - completed
 
 permissions:
   contents: write
 
 jobs:
   release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: windows-latest
 
     steps:
-      - name: Download artifact from previous workflow
+      - name: Download artifacts from build workflow
         uses: actions/download-artifact@v4
         with:
-          name: fidobulk
-          path: ./app/dist/fidobulk.exe
-
-      - name: Show files
-        run: dir ./app/dist
+          name: python-app-exe
+          path: ./app/dist
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
