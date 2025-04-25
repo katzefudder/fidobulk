@@ -38,3 +38,11 @@ jobs:
         with:
           name: ykbatch
           path: dist/ykbatch.exe
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/ykbatch.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
