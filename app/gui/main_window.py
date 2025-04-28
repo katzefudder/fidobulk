@@ -45,24 +45,11 @@ class YkBatch(QWidget):
             self.set_random_pin.clicked.connect(self.handle_set_random_pin)
             layout.addWidget(self.set_random_pin)
 
-            # self.send_button = QPushButton("Absenden")
-            # self.send_button.clicked.connect(self.handle_submit)
-            # layout.addWidget(self.send_button)
-
         # self.reset_button = QPushButton("Reset Fido Stick")
         # self.reset_button.clicked.connect(self.handle_reset)
         # layout.addWidget(self.reset_button)
 
         self.setLayout(layout)
-
-    def handle_submit(self):
-        selected_user = self.user_combobox.currentData()
-        # TODO: update GUI after successfully setting the pin
-        try:
-            submit_user_data(selected_user, self.random_pin, self.serial_number)
-            QMessageBox.information(self, "Erfolg", f"✅ Pin für {selected_user.displayName} gesetzt und zur Datenbank übermittelt!")
-        except Exception as e:
-            QMessageBox.critical(self, "Fehler", f"⛔️ Fehler:\n{e}")
 
     def handle_set_random_pin(self):
         pin_value = self.device.generate_pin()
@@ -71,7 +58,7 @@ class YkBatch(QWidget):
         try:
             self.random_pin = pin_value
             self.device.set_pin(pin_value)
-            QMessageBox.information(self, "Erfolg", "✅ PIN erfolgreich gesetzt: " + str(pin_value))
+            QMessageBox.information(self, "Erfolg", "✅ PIN erfolgreich gesetzt")
             self.set_random_pin.hide()
             
             try:
