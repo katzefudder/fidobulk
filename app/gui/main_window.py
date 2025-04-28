@@ -54,7 +54,6 @@ class YkBatch(QWidget):
     def handle_set_random_pin(self):
         pin_value = self.device.generate_pin()
         print(f"pin set: {pin_value}")
-        # TODO: update GUI after successfully setting the pin
         try:
             self.random_pin = pin_value
             self.device.set_pin(pin_value)
@@ -64,7 +63,7 @@ class YkBatch(QWidget):
             try:
                 selected_user = self.user_combobox.currentData()
                 submit_user_data(selected_user, self.random_pin, self.serial_number)
-                QMessageBox.information(self, "Erfolg", f"✅ Pin für {selected_user} gesetzt und zur Datenbank übermittelt!")
+                QMessageBox.information(self, "Erfolg", f"✅ Pin für '{selected_user['displayName']}' gesetzt und zur Datenbank übermittelt!")
                 self.user_combobox.hide()
             except Exception as e:
                 QMessageBox.critical(self, "Fehler", f"⛔️ Fehler:\n{e}")
