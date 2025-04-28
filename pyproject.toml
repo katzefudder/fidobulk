@@ -1,26 +1,25 @@
 [project]
-name = "fidokey-enrollment"
-version = "0.0.1"
+name = "fidobulk"
+version = "0.1.2"
 description = ""
 authors = [
-    { name = "Florian Dehn", email = "florian.dehn@cgi.com" }
+    {name = "Florian Dehn",email = "florian-dehn@cgi.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.13,<4"
+requires-python = ">=3.10"
 dependencies = [
-    "pyqt5 ==5.15.11",
-    "requests >=2.32.3,<3.0.0",
-    "yubikey-manager >=5.6.1,<6.0.0",
-    "fido2",
-    "pyinstaller",
-    "pyscard",
 ]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4"
+pyqt5 = "5.15.11"
+requests = ">=2.32.3,<3.0.0"
+yubikey-manager = ">=5.6.1,<6.0.0"
+fido2 = "*"
+pyinstaller = "*"
+pyscard = "2.2.1" # https://github.com/Yubico/yubikey-manager/issues/666
+
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
-packages = [
-    { include = "app" }
-]
