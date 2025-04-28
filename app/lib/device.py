@@ -6,6 +6,7 @@ from fido2.ctap import CtapError
 import secrets
 import string
 import threading
+import pyscard
 
 class Device:
     device = {}
