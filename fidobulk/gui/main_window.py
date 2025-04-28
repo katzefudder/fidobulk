@@ -4,7 +4,7 @@ from lib.auth import get_access_token
 from lib.users import fetch_users
 from lib.api_client import submit_user_data
 
-class YkBatch(QWidget):
+class Fidobulk(QWidget):
 
     device = []
     random_pin = "00000"
@@ -32,7 +32,7 @@ class YkBatch(QWidget):
 
         self.access_token = get_access_token("clientId", "secret", "domainName.onmicrosoft.com")
 
-        if device_instance.pin_already_set:
+        if device_instance._is_pin_already_set:
             self.pin_text_label = QLabel("Pin schon gesetzt. Um diesen neu zu setzen, bitte FIDO-Stick zurücksetzen.")
             layout.addWidget(self.pin_text_label)
         else:
