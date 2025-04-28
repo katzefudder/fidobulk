@@ -3,4 +3,4 @@ yubikey-manager
 requests
 fido2
 pyinstaller
-pyscard
+pyscard==2.2.1
