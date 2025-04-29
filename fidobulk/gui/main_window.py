@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QPlainTextEdit, QPushButton, QComboBox, QMessageBox, QLineEdit, QDialog
 from lib.device import Device
 from lib.auth import get_access_token
-from lib.users import fetch_users
+from lib.entra import fetch_users_in_group
 from lib.api_client import submit_user_data
 
 class Fidobulk(QWidget):
@@ -38,16 +38,15 @@ class Fidobulk(QWidget):
         entraid = self.config['entraid']
         client_id = entraid['client_id']
         client_secret = entraid['client_secret']
-        tenant_id = entraid['tenant_id']
         token_endpoint = entraid['token_endpoint']
 
-        self.access_token = get_access_token(client_id=client_id, client_secret=client_secret, tenant_id=tenant_id, token_endpoint=token_endpoint)
+        self.access_token = get_access_token(client_id=client_id, client_secret=client_secret, token_endpoint=token_endpoint)
 
         if self.device.pin_already_set:
             self.pin_text_label = QLabel("Pin schon gesetzt. Um diesen neu zu setzen, bitte FIDO-Stick zurücksetzen.")
             layout.addWidget(self.pin_text_label)
         else:
-            self.users = fetch_users(self.access_token)
+            self.users = fetch_users_in_group(self.access_token, self.config['entraid']['group_name'])
             self.user_combobox = QComboBox()
             for user in self.users:
                 self.user_combobox.addItem(user['displayName'], user)
