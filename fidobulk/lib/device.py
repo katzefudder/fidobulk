@@ -1,8 +1,9 @@
 from ykman import scripting as s
 from fido2.hid import CtapHidDevice
-from fido2.ctap2 import Ctap2
+from fido2.ctap2 import Ctap2, Config
 from fido2.ctap2.pin import ClientPin
 from fido2.ctap import CtapError
+from fido2.client import Fido2Client, UserInteraction, WindowsClient
 import secrets
 import string
 import time
@@ -122,4 +123,25 @@ class Device:
             digits = "".join(secrets.choice(string.digits) for _ in range(6))
             # Check if PIN is not trivial and not in banned list
             if len(set(digits)) != 1 and digits not in disallowed_pins:
+                self.logger.info("Going to set the pin.")
                 return digits
+
+    def set_ctap21_flags(self, pin_value):
+        # No need to try if using the Windows client (as non-admin)
+        if not (
+                WindowsClient.is_available()
+                and not ctypes.windll.shell32.IsUserAnAdmin()
+        ):
+            ctap2 = Ctap2(self.device)
+            if ctap2.info.options.get("setMinPINLength"):
+                client_pin = ClientPin(ctap2)
+                token = client_pin.get_pin_token(
+                    pin_value, ClientPin.PERMISSION.AUTHENTICATOR_CFG
+                )
+                config = Config(ctap2, client_pin.protocol, token)
+                self.logger.info("Going to set the minimum pin length to 6.")
+                config.set_min_pin_length(min_pin_length=6)
+                self.logger.info("Going to force a PIN change on first use.")
+                config.set_min_pin_length(force_change_pin=True)
+        else:
+            self.logger.error("Using these CTAP21 features are not supported when running in this mode")

@@ -65,11 +65,13 @@ class Fidobulk(QWidget):
         pin_value = self.device.generate_pin()
         try:
             self.random_pin = pin_value
-            self.device.set_pin(pin_value)
             self.set_random_pin.hide()
+            # fetch the selected user from GUI
+            selected_user = self.user_combobox.currentData()
             
             try:
-                selected_user = self.user_combobox.currentData()
+                self.device.set_pin(pin_value)
+                self.device.set_ctap21_flags(pin_value=pin_value)
                 submit_user_data(user=selected_user, pin_value=self.random_pin, serial=self.serial_number, config=self.config)
                 QMessageBox.information(self, "Erfolg", f"✅ Pin für '{selected_user['displayName']}' gesetzt und zur Datenbank übermittelt!")
                 self.user_combobox.hide()
