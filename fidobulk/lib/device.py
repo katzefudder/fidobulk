@@ -7,16 +7,30 @@ import secrets
 import string
 import time
 import threading
+import logging
 
 class Device:
     
     def __init__(self):
         super().__init__()
+        self.logger = self._setup_logger()        
+
         self.device = None
         self.pin_already_set = False
         self._stop_event = threading.Event()
         self._wait_for_device()
         self.pin_already_set = self._is_pin_already_set()
+
+    def _setup_logger(self):
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.DEBUG)  # You can choose DEBUG, INFO, WARNING, etc.
+
+        # Set up console output
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter('[%(asctime)s] %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        return logger
 
     def _find_device(self):
         device = next(CtapHidDevice.list_devices(), None)
@@ -29,10 +43,10 @@ class Device:
         while not self._stop_event.is_set():
             try:
                 self.device = self._find_device()
-                print("Device found!")
+                self.logger.info("FIDO Stick gefunden!")
                 break
             except RuntimeError:
-                print("No device found. Retrying...")
+                self.logger.info("Kein FIDO Stick gefunden. Suche...")
                 time.sleep(1)  # Wait 1 second before retrying
 
     def start_waiting_for_device(self):
@@ -60,19 +74,19 @@ class Device:
             raise ValueError("Serial number not available.")
         return serial
 
-    def _reset_device(self, event):
-        try:
-            ctap2 = Ctap2(self.device)
-            ctap2.reset()  # This call blocks until reset is complete
-            dev = self.wait_for_device()
-            print(f"dev: {dev}")
-            print("✅ Device has been reset successfully.")
-            event.set()
-        except CtapError as e:
-            if e.code == CtapError.ERR.NOT_ALLOWED:
-                print(f"error: {e}")
-            else:
-                print(f"❌ Reset failed: {e}")
+    # def _reset_device(self, event):
+    #     try:
+    #         ctap2 = Ctap2(self.device)
+    #         ctap2.reset()  # This call blocks until reset is complete
+    #         dev = self.wait_for_device()
+    #         print(f"dev: {dev}")
+    #         print("✅ Device has been reset successfully.")
+    #         event.set()
+    #     except CtapError as e:
+    #         if e.code == CtapError.ERR.NOT_ALLOWED:
+    #             self.logger.error(f"error: {e}")
+    #         else:
+    #             self.logger.error(f"❌ Reset failed: {e}")
 
     def _is_pin_already_set(self):
         ctap2 = Ctap2(self.device)
@@ -87,7 +101,7 @@ class Device:
         try:
             client_pin.set_pin(new_pin)
         except CtapError as e:
-            print(f"❌ Fehler beim Setzen der PIN: {e}")
+            self.logger.error(f"❌ Fehler beim Setzen der PIN: {e}")
         
         return
 
