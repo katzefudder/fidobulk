@@ -23,7 +23,7 @@ class Device:
 
     def _setup_logger(self):
         logger = logging.getLogger(__name__)
-        logger.setLevel(logging.DEBUG)  # You can choose DEBUG, INFO, WARNING, etc.
+        logger.setLevel(logging.DEBUG)
 
         # Set up console output
         handler = logging.StreamHandler()

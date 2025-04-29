@@ -9,10 +9,10 @@ class Fidobulk(QWidget):
     device = None
     random_pin = "00000"
 
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
+        self.config = config
         self.init_ui()
-
 
     def init_ui(self):
         self.setWindowTitle("YubiKey Demo")
@@ -35,7 +35,13 @@ class Fidobulk(QWidget):
             self.label = QLabel("FIDO Seriennummer: Fehler")
         layout.addWidget(self.label)
 
-        self.access_token = get_access_token("clientId", "secret", "domainName.onmicrosoft.com")
+        entraid = self.config['entraid']
+        client_id = entraid['client_id']
+        client_secret = entraid['client_secret']
+        tenant_id = entraid['tenant_id']
+        token_endpoint = entraid['token_endpoint']
+
+        self.access_token = get_access_token(client_id=client_id, client_secret=client_secret, tenant_id=tenant_id, token_endpoint=token_endpoint)
 
         if self.device.pin_already_set:
             self.pin_text_label = QLabel("Pin schon gesetzt. Um diesen neu zu setzen, bitte FIDO-Stick zurücksetzen.")
@@ -58,16 +64,14 @@ class Fidobulk(QWidget):
 
     def handle_set_random_pin(self):
         pin_value = self.device.generate_pin()
-        print(f"pin set: {pin_value}")
         try:
             self.random_pin = pin_value
             self.device.set_pin(pin_value)
-            QMessageBox.information(self, "Erfolg", "✅ PIN erfolgreich gesetzt")
             self.set_random_pin.hide()
             
             try:
                 selected_user = self.user_combobox.currentData()
-                submit_user_data(selected_user, self.random_pin, self.serial_number)
+                submit_user_data(user=selected_user, pin_value=self.random_pin, serial=self.serial_number, config=self.config)
                 QMessageBox.information(self, "Erfolg", f"✅ Pin für '{selected_user['displayName']}' gesetzt und zur Datenbank übermittelt!")
                 self.user_combobox.hide()
             except Exception as e:
