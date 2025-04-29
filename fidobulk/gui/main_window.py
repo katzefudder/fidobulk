@@ -6,7 +6,7 @@ from lib.api_client import submit_user_data
 
 class Fidobulk(QWidget):
 
-    device = []
+    device = None
     random_pin = "00000"
 
     def __init__(self):
@@ -17,8 +17,13 @@ class Fidobulk(QWidget):
     def init_ui(self):
         self.setWindowTitle("YubiKey Demo")
         self.resize(300, 140)
-        device_instance = Device()
-        self.device = device_instance
+
+        try:
+            self.device = Device()
+        except RuntimeError as e:
+            QMessageBox.critical(self, "Fehler", f"⛔️ Fehler:\n{e}")
+            raise
+        
         layout = QVBoxLayout()
 
         try:
@@ -32,7 +37,7 @@ class Fidobulk(QWidget):
 
         self.access_token = get_access_token("clientId", "secret", "domainName.onmicrosoft.com")
 
-        if device_instance._is_pin_already_set:
+        if self.device.pin_already_set:
             self.pin_text_label = QLabel("Pin schon gesetzt. Um diesen neu zu setzen, bitte FIDO-Stick zurücksetzen.")
             layout.addWidget(self.pin_text_label)
         else:
